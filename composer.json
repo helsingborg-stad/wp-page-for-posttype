@@ -1,0 +1,13 @@
+{
+    "name": "helsingborg-stad/wp-page-for-post-type",
+    "type": "wordpress-plugin",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Kristoffer Svanmark",
+            "email": "kristoffer.svanmark@knowit.se"
+        }
+    ],
+    "minimum-stability": "stable",
+    "require": {}
+}
