@@ -19,9 +19,15 @@ class Template
             return $template;
         }
 
+        // Get page template
         $pageForPostType = get_option('page_for_' . get_post_type());
-
         $template = get_page_template_slug($pageForPostType);
+
+        // Page-template if page is using default template
+        if (empty($template)) {
+            $template = 'page';
+        }
+
         return $template;
     }
 }
