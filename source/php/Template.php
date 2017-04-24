@@ -51,6 +51,7 @@ class Template
 
         global $wp_query;
         $wp_query->posts = array(get_post($pageForPostType));
+        $wp_query->post_count = 1;
 
         return $template;
     }
