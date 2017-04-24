@@ -21,7 +21,7 @@ class Settings
 
         add_settings_section(
             'wp_page_for_post_type',
-            __('Post types', 'wp-page-for-post-type'),
+            __('Page and template for post type archives', 'wp-page-for-post-type'),
             '__return_false',
             'reading'
         );
@@ -34,6 +34,7 @@ class Settings
             $id = 'page_for_' . $postType->name;
 
             register_setting('reading', $id, array($this, 'flush'));
+            register_setting('reading', 'page_for_' . $postType->name . '_template');
 
             add_settings_field(
                 $id,
@@ -79,5 +80,16 @@ class Settings
             'selected'         => esc_attr($args['value']),
             'show_option_none' => sprintf(__('Default (/%s/)'), $default),
         ));
+
+        $defaultTitle =__('Archive', 'wp-page-for-post-type');
+        $selectedTemplate = get_option('template_for_' . $args['post_type']->name);
+
+        $useTemplate = checked(get_option('page_for_' . $args['post_type']->name . '_template'), 'on', false);
+
+        if ($useTemplate) {
+            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_template" checked> ' . __('Use page\'s template', 'wp-page-for-post-type') . '</label>';
+        } else {
+            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_template"> ' . __('Use page\'s template', 'wp-page-for-post-type') . '</label>';
+        }
     }
 }
