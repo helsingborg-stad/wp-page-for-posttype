@@ -34,6 +34,10 @@ class Template
 
     public function post($template)
     {
+        if (!is_post_type_archive()) {
+            return $template;
+        }
+
         $useContent = get_option('page_for_' . get_post_type() . '_content');
         if (!$useContent) {
             return $template;
