@@ -9,7 +9,12 @@ class Rewrite
         add_action('registered_post_type', array($this, 'updateRewrite'), 11, 2);
     }
 
-
+    /**
+     * Updates the rewrite rules for the posttype
+     * @param  string $postType
+     * @param  array $args
+     * @return void
+     */
     public function updateRewrite(string $postType, $args)
     {
         global $wp_post_types, $wp_rewrite;
@@ -43,6 +48,12 @@ class Rewrite
         $wp_post_types[$postType] = $args;
     }
 
+    /**
+     * Rebuild rewrite rules
+     * @param  string $postType
+     * @param  array $args
+     * @return bool
+     */
     public function rebuildRewriteRules($postType, $args)
     {
         global $wp_post_types, $wp_rewrite;
@@ -67,13 +78,27 @@ class Rewrite
             // Add rewrite rules for feeds
             if ($args->rewrite['feeds'] && $wp_rewrite->feeds) {
                 $feeds = '(' . trim(implode('|', $wp_rewrite->feeds)) . ')';
-                add_rewrite_rule("{$archiveSlug}/feed/$feeds/?$", "index.php?post_type=$postType" . '&feed=$matches[1]', 'top');
-                add_rewrite_rule("{$archiveSlug}/$feeds/?$", "index.php?post_type=$postType" . '&feed=$matches[1]', 'top');
+
+                add_rewrite_rule(
+                    "{$archiveSlug}/feed/$feeds/?$",
+                    "index.php?post_type=$postType" . '&feed=$matches[1]',
+                    'top'
+                );
+
+                add_rewrite_rule(
+                    "{$archiveSlug}/$feeds/?$",
+                    "index.php?post_type=$postType" . '&feed=$matches[1]',
+                    'top'
+                );
             }
 
             // Add rewrite rules for pagination
             if ($args->rewrite['pages']) {
-                add_rewrite_rule("{$archiveSlug}/{$wp_rewrite->pagination_base}/([0-9]{1,})/?$", "index.php?post_type=$postType" . '&paged=$matches[1]', 'top');
+                add_rewrite_rule(
+                    "{$archiveSlug}/{$wp_rewrite->pagination_base}/([0-9]{1,})/?$",
+                    "index.php?post_type=$postType" . '&paged=$matches[1]',
+                    'top'
+                );
             }
         }
 
