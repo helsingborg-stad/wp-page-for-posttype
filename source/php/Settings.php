@@ -35,6 +35,7 @@ class Settings
 
             register_setting('reading', $id, array($this, 'flush'));
             register_setting('reading', 'page_for_' . $postType->name . '_template');
+            register_setting('reading', 'page_for_' . $postType->name . '_content');
 
             add_settings_field(
                 $id,
@@ -81,15 +82,18 @@ class Settings
             'show_option_none' => sprintf(__('Default (/%s/)'), $default),
         ));
 
-        $defaultTitle =__('Archive', 'wp-page-for-post-type');
-        $selectedTemplate = get_option('template_for_' . $args['post_type']->name);
-
         $useTemplate = checked(get_option('page_for_' . $args['post_type']->name . '_template'), 'on', false);
-
         if ($useTemplate) {
-            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_template" checked> ' . __('Use page\'s template', 'wp-page-for-post-type') . '</label>';
+            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_template" checked> ' . __('Use template from page', 'wp-page-for-post-type') . '</label>';
         } else {
-            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_template"> ' . __('Use page\'s template', 'wp-page-for-post-type') . '</label>';
+            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_template"> ' . __('Use template from page', 'wp-page-for-post-type') . '</label>';
+        }
+
+        $useContent = checked(get_option('page_for_' . $args['post_type']->name . '_content'), 'on', false);
+        if ($useContent) {
+            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_content" checked> ' . __('Use content from page', 'wp-page-for-post-type') . '</label>';
+        } else {
+            echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_content"> ' . __('Use content from page', 'wp-page-for-post-type') . '</label>';
         }
     }
 }

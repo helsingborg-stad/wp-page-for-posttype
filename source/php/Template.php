@@ -7,6 +7,7 @@ class Template
     public function __construct()
     {
         add_filter('template_include', array($this, 'template'), 1);
+        add_filter('template_include', array($this, 'post'), 2);
     }
 
     public function template($template)
@@ -27,6 +28,25 @@ class Template
         if (empty($template)) {
             $template = 'page';
         }
+
+        return $template;
+    }
+
+    public function post($template)
+    {
+        $useContent = get_option('page_for_' . get_post_type() . '_content');
+        if (!$useContent) {
+            return $template;
+        }
+
+        $pageForPostType = get_option('page_for_' . get_post_type());
+
+        if (!$pageForPostType) {
+            return $template;
+        }
+
+        global $wp_query;
+        $wp_query->posts = array(get_post($pageForPostType));
 
         return $template;
     }
