@@ -17,13 +17,8 @@ class NavClasses
      */
     public function updateNavCLasses($sorted_menu_items, $args)
     {
-        $queried_object = get_queried_object();
-        if (! $queried_object) {
-            return $sorted_menu_items;
-        }
-
-        $object_post_type = get_post_type($queried_object->ID);
-        if (! $object_post_type) {
+        $object_post_type = get_post_type();
+        if (! get_post_type()) {
             return $sorted_menu_items;
         }
 
