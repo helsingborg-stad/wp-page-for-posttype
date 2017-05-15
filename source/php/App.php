@@ -9,5 +9,6 @@ class App
         new Settings();
         new Rewrite();
         new Template();
+        new NavClasses();
     }
 }
