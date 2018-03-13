@@ -76,6 +76,7 @@ class Settings
         }
 
         wp_dropdown_pages(array(
+            'post_status'      => array('publish', 'private'),
             'name'             => esc_attr($args['name']),
             'id'               => esc_attr($args['name'] . '_dropdown'),
             'selected'         => esc_attr($args['value']),

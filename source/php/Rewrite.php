@@ -26,7 +26,8 @@ class Rewrite
         }
 
         // Bail if page not published
-        if (get_post_status($pageForPostType) !== 'publish') {
+        $postStatus = get_post_status($pageForPostType);
+        if ($postStatus !== 'publish' ||$postStatus !== 'private') {
             return;
         }
 
