@@ -121,7 +121,7 @@ class Settings
         $postsAndPages = get_posts($args); 
 
         //Return posts and pages
-        if(!empty($postsAndPages)) {
+        if(!empty($postsAndPages) && is_array($postsAndPages)) {
 
             //Suffix with post type
             array_walk($postsAndPages, function(&$item, $key){
