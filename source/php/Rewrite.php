@@ -45,6 +45,9 @@ class Rewrite
         // Rebuild rewrite rules
         $this->rebuildRewriteRules($postType, $args, $oldRewrite);
 
+        //Flush
+        $this->flushRewriteRules(); 
+
         // Update global
         $wp_post_types[$postType] = $args;
     }
@@ -131,4 +134,15 @@ class Rewrite
 
         return $slug;
     }
+
+
+    /**
+     * Keep rewrites up to date
+     * @return void
+     */
+    public function flushRewriteRules()
+    {
+        flush_rewrite_rules(false); 
+    }
+
 }
