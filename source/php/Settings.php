@@ -126,7 +126,6 @@ class Settings
             //Suffix with post type
             array_walk($postsAndPages, function(&$item, $key){
                 $item->post_title = $item->post_title . " (" . $item->post_type. ")"; 
-
             }); 
 
             //Return multi posttype 
