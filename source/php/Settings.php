@@ -101,6 +101,11 @@ class Settings
 
     public function addCustomPostTypes($pages, $parsedArgs) {
 
+        //Limit to backend
+        if(!is_admin()) {
+            return $pages; 
+        }
+
         //Limit to reading settings
         $screen = get_current_screen(); 
         if(is_null($screen) || !(is_a($screen, 'WP_Screen') && isset($screen->base) && $screen->base == "options-reading")) {
