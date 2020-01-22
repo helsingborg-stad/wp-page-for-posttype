@@ -6,7 +6,7 @@ class Rewrite
 {
     public function __construct()
     {
-        add_action('registered_post_type', array($this, 'updateRewrite'), 11, 2);
+        add_action(__NAMESPACE__ . '/renderOptionsPage', array($this, 'updateRewrite'), 10, 2);
     }
 
     /**
@@ -43,7 +43,7 @@ class Rewrite
         $args->has_archive = $newSlug;
 
         // Rebuild rewrite rules
-        $this->rebuildRewriteRules($postType, $args, $oldRewrite);
+        $this->rebuildRewriteRules($postType, $args, $newSlug);
 
         //Flush
         $this->flushRewriteRules(); 
@@ -58,7 +58,7 @@ class Rewrite
      * @param  array $args
      * @return bool
      */
-    public function rebuildRewriteRules($postType, $args)
+    public function rebuildRewriteRules($postType, $args, $newSlug)
     {
         global $wp_post_types, $wp_rewrite;
 
@@ -131,7 +131,7 @@ class Rewrite
         $slug = get_permalink($postId);
         $slug = str_replace(home_url(), '', $slug);
         $slug = trim($slug, '/');
-
+        
         return $slug;
     }
 
