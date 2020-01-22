@@ -4,9 +4,44 @@ namespace WpPageForPostType;
 
 class Rewrite
 {
+
+    private $generatorId = "&generator=wp-pfp"; 
+
     public function __construct()
     {
+        //Redo rewriterules whenever options page is visited (before save, after save)
         add_action(__NAMESPACE__ . '/renderOptionsPage', array($this, 'updateRewrite'), 10, 2);
+
+        //Reorder rewrite rules
+        add_filter('rewrite_rules_array', array($this, 'reorderRewriteRules')); 
+    }
+
+    public function reorderRewriteRules($rewriteRules) {
+
+        //Sanity check
+        if(!is_array($rewriteRules) ||empty($rewriteRules)) {
+            return $rewriteRules; 
+        }
+
+        //Stack all rewrites matching generator
+        $stack = array(); 
+        foreach($rewriteRules as $ruleKey => $rule) {
+            if(strpos($rule, $this->generatorId) !== false) {
+                $stack[$ruleKey] = str_replace($this->generatorId, "", $rule); 
+                unset($rewriteRules[$ruleKey]);
+            }
+
+            if(strpos($ruleKey, $this->generatorId) !== false) {
+                $stack[str_replace($this->generatorId, "", $ruleKey)] = $rule; 
+                unset($rewriteRules[$ruleKey]);
+            } 
+        }
+
+        //Prepend to array of rewrite rules
+        $rewriteRules = array_merge($stack, $rewriteRules); 
+
+        //Return reordered array
+        return $rewriteRules; 
     }
 
     /**
@@ -42,14 +77,14 @@ class Rewrite
         $args->rewrite     = wp_parse_args(array('slug' => $newSlug), $args->rewrite);
         $args->has_archive = $newSlug;
 
+        // Update global
+        $wp_post_types[$postType] = $args;
+
         // Rebuild rewrite rules
         $this->rebuildRewriteRules($postType, $args, $newSlug);
 
         //Flush
         $this->flushRewriteRules(); 
-
-        // Update global
-        $wp_post_types[$postType] = $args;
     }
 
     /**
@@ -77,7 +112,7 @@ class Rewrite
             }
 
             // Add rewrite rule for the archive
-            add_rewrite_rule("{$archiveSlug}/?$", "index.php?post_type=$postType", 'top');
+            add_rewrite_rule("{$archiveSlug}/?$", "index.php?post_type=$postType$this->generatorId", 'top');
 
             // Add rewrite rules for feeds
             if ($args->rewrite['feeds'] && $wp_rewrite->feeds) {
@@ -85,13 +120,13 @@ class Rewrite
 
                 add_rewrite_rule(
                     "{$archiveSlug}/feed/$feeds/?$",
-                    "index.php?post_type=$postType" . '&feed=$matches[1]',
+                    "index.php?post_type=$postType$this->generatorId" . '&feed=$matches[1]',
                     'top'
                 );
 
                 add_rewrite_rule(
                     "{$archiveSlug}/$feeds/?$",
-                    "index.php?post_type=$postType" . '&feed=$matches[1]',
+                    "index.php?post_type=$postType$this->generatorId" . '&feed=$matches[1]',
                     'top'
                 );
             }
@@ -100,7 +135,7 @@ class Rewrite
             if ($args->rewrite['pages']) {
                 add_rewrite_rule(
                     "{$archiveSlug}/{$wp_rewrite->pagination_base}/([0-9]{1,})/?$",
-                    "index.php?post_type=$postType" . '&paged=$matches[1]',
+                    "index.php?post_type=$postType$this->generatorId" . '&paged=$matches[1]',
                     'top'
                 );
             }
@@ -113,10 +148,10 @@ class Rewrite
         if (isset($args->rewrite['permastruct'])) {
             $permastruct = str_replace($oldRewrite, $slug, $args->rewrite['permastruct']);
         } else {
-            $permastruct = "{$args->rewrite['slug']}/%$postType%";
+            $permastruct = "{$args->rewrite['slug']}/%$postType%$";
         }
 
-        add_permastruct($postType, $permastruct, $permastructArgs);
+        add_permastruct($postType, $permastruct . $this->generatorId, $permastructArgs);
 
         return true;
     }
@@ -134,7 +169,6 @@ class Rewrite
         
         return $slug;
     }
-
 
     /**
      * Keep rewrites up to date

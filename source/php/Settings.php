@@ -18,6 +18,8 @@ class Settings
      */
     public function register()
     {
+        global $wp_post_types; 
+
         $postTypes = get_post_types(array(), 'objects');
 
         add_settings_section(
@@ -51,7 +53,7 @@ class Settings
                 )
             );
 
-            do_action(__NAMESPACE__ . '/renderOptionsPage', $postType->name, $postType); 
+            do_action(__NAMESPACE__ . '/renderOptionsPage', $postType->name, $wp_post_types[$postType->name]); 
         }
     }
 
