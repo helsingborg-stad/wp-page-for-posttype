@@ -28,13 +28,13 @@ class Settings
         );
 
         $postTypes = array_filter($postTypes, function ($item) {
-            return $item->has_archive;
+            return $item->has_archive && $item->public;
         });
 
         foreach ($postTypes as $postType) {
             $id = 'page_for_' . $postType->name;
 
-            register_setting('reading', $id, array($this, 'flush'));
+            register_setting('reading', $id, array($this, 'forceIntval'));
             register_setting('reading', 'page_for_' . $postType->name . '_template');
             register_setting('reading', 'page_for_' . $postType->name . '_content');
 
@@ -50,17 +50,18 @@ class Settings
                     'value'     => get_option($id)
                 )
             );
+
+            do_action(__NAMESPACE__ . '/renderOptionsPage', $postType->name, $postType); 
         }
     }
 
     /**
-     * Flush rewrite rules and force intval for page for post type settings
+     * Force intval for page for post type settings
      * @param  string $value
      * @return int
      */
-    public function flush($value)
+    public function forceIntval($value)
     {
-        flush_rewrite_rules();
         return intval($value);
     }
 
