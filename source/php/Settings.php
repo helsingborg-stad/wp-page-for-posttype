@@ -118,12 +118,12 @@ class Settings
             'public' => true
         )); 
 
-        //Set neeeded args 
-        $args['post_type'] = $postTypes;
-        $args['numberposts'] = -1; 
-
         //Get posts 
-        $postsAndPages = get_posts($args); 
+        $postsAndPages = get_posts(array(
+            'post_type' => $postTypes,
+            'numberposts' => -1,
+            'post_status' => array("publish", "private")
+        )); 
 
         //Return posts and pages
         if(!empty($postsAndPages) && is_array($postsAndPages)) {
