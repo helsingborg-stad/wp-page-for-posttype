@@ -14,6 +14,7 @@ class Rewrite
 
         //Reorder rewrite rules
         add_filter('rewrite_rules_array', array($this, 'reorderRewriteRules')); 
+
     }
 
     public function reorderRewriteRules($rewriteRules) {
@@ -150,7 +151,7 @@ class Rewrite
         } else {
             $permastruct = "{$args->rewrite['slug']}/%$postType%$";
         }
-
+        remove_permastruct($postType); 
         add_permastruct($postType, $permastruct . $this->generatorId, $permastructArgs);
 
         return true;
