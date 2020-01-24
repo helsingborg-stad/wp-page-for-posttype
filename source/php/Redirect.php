@@ -49,9 +49,9 @@ class Redirect
      * @return void
      */
     public function redirectFromOrginalArchive() {
-
+      
       //Check if this is a archive
-      if(!is_archive()) {
+      if(!is_archive() ||is_feed()) {
         return; 
       }
 
