@@ -5,6 +5,7 @@ namespace WpPageForPostType;
 class Settings
 {
     public static $originalSlugs = array();
+    private $generatorId = "&generator=wp-pfp"; 
 
     public function __construct()
     {
@@ -55,14 +56,31 @@ class Settings
             );
 
             //Get url for the post, and save it
-            add_action('update_option_' . $id, function($oldValue, $newValue, $optionName) {
-                update_option($optionName . "_url", get_permalink($newValue)); 
-            }, 10, 3); 
+            add_action('update_option_' . $id, array($this, 'updateStaticUrl'), 10, 3); 
 
             //Run rewrite rules
             do_action(__NAMESPACE__ . '/renderOptionsPage', $postType->name, $wp_post_types[$postType->name]); 
         }
     }
+
+
+    /**
+     * Create static permalink to the post
+     * @param  string $oldValue     The old value stored
+     * @param  string $oldValue     The new value to update to
+     * @param  string $optionName   The option name affected
+     * @return bool
+     */
+    public function updateStaticUrl($oldValue, $newValue, $optionName)
+    {
+        //Get and sanitize permalink
+        $permalink = get_permalink($newValue); 
+        $permalink = str_replace($this->generatorId, "", $permalink); 
+        
+        //Update option
+        return update_option($optionName . "_url", $permalink); 
+    }
+
 
     /**
      * Force intval for page for post type settings

@@ -157,8 +157,9 @@ class Rewrite
                     "index.php?post_type=$postType$this->generatorId" . '&feed=$matches[1]',
                     'top'
                 );
+                
             }
-
+ 
             // Add rewrite rules for pagination
             if ($args->rewrite['pages']) {
                 add_rewrite_rule(
@@ -166,7 +167,7 @@ class Rewrite
                     "index.php?post_type=$postType$this->generatorId" . '&paged=$matches[1]',
                     'top'
                 );
-            }
+            } 
         }
 
         $permastructArgs = $args->rewrite;
