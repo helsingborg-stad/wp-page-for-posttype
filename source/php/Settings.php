@@ -18,6 +18,7 @@ class Settings
      */
     public function register()
     {
+
         global $wp_post_types; 
 
         $postTypes = get_post_types(array(), 'objects');
@@ -53,6 +54,12 @@ class Settings
                 )
             );
 
+            //Get url for the post, and save it
+            add_action('update_option_' . $id, function($oldValue, $newValue, $optionName) {
+                update_option($optionName . "_url", get_permalink($newValue)); 
+            }, 10, 3); 
+
+            //Run rewrite rules
             do_action(__NAMESPACE__ . '/renderOptionsPage', $postType->name, $wp_post_types[$postType->name]); 
         }
     }

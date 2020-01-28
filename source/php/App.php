@@ -10,6 +10,5 @@ class App
         new Rewrite();
         new Template();
         new NavClasses();
-        new Redirect(); 
     }
 }

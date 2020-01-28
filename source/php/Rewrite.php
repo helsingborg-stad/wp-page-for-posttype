@@ -12,27 +12,37 @@ class Rewrite
         //Redo rewriterules whenever options page is visited (before save, after save)
         add_action(__NAMESPACE__ . '/renderOptionsPage', array($this, 'updateRewrite'), 10, 2);
 
+        //Change slug (before cpt registration)
+        add_filter('register_post_type_args', array($this, 'filterPostTypeRegistration'), 500, 2); 
+
         //Reorder rewrite rules
         add_filter('rewrite_rules_array', array($this, 'reorderRewriteRules')); 
 
-        add_action( 'init', function() {
-            remove_permastruct('job-listing'); 
-            remove_permastruct('job-listing-category'); 
-            remove_permastruct('job-listing-source'); 
-
-            global $wp_rewrite; 
-
-            foreach($wp_rewrite->extra_rules_top as $ruleKey => $rule) {
-                if(strpos($rule, "post_type=job-listing") !== false) {
-                    unset($wp_rewrite->extra_rules_top[$ruleKey]); 
-                }
-            }
-
-            //add_permastruct('job-listing', $permastruct . $this->generatorId, $permastructArgs);
-            //$this->flushRewriteRules(); 
-        }); 
-
     }
+
+    /**
+     * Filter base rewrites for posttypes
+     * @param  array  $args The arguments provided in posttype registration
+     * @param  string $name The name of the posttype
+     * @return array  $args Contains the new filtered array with modified rewrites
+     */
+
+    public function filterPostTypeRegistration($args, $name) {
+
+        $pageUrl = get_option('page_for_' . $name . '_url');
+
+        if(!empty($pageUrl)) {
+            $args['rewrite']['slug'] = str_replace(home_url(), "", rtrim($pageUrl, "/")); 
+        }
+
+        return $args; 
+    }
+
+    /**
+     * Make rewrite rules important
+     * @param  array $rewriteRules
+     * @return array
+     */
 
     public function reorderRewriteRules($rewriteRules) {
 
@@ -168,7 +178,7 @@ class Rewrite
         } else {
             $permastruct = "{$args->rewrite['slug']}/%$postType%$";
         }
-        //remove_permastruct($postType); 
+
         add_permastruct($postType, $permastruct . $this->generatorId, $permastructArgs);
 
         return true;
