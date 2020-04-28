@@ -18,6 +18,20 @@ class Rewrite
         //Reorder rewrite rules
         add_filter('rewrite_rules_array', array($this, 'reorderRewriteRules')); 
 
+        //Remove generator tag from backend list
+        add_filter('post_type_link',array($this, 'sanitizeBackendViewUrl'),10,2);
+
+    }
+
+    /**
+     * Remove generator tag from backend list
+     *
+     * @param string $permalink
+     * @param WP_Post $post
+     * @return string
+     */
+    public function sanitizeBackendViewUrl( $permalink, $post ) {
+        return str_replace($this->generatorId, "", $permalink); 
     }
 
     /**
