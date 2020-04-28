@@ -5,7 +5,7 @@ namespace WpPageForPostType;
 class Rewrite
 {
 
-    private $generatorId = "&generator=wp-pfp"; 
+    private $generatorId = "?generator=wp-pfp"; 
 
     public function __construct()
     {
@@ -177,7 +177,7 @@ class Rewrite
         if (isset($args->rewrite['permastruct'])) {
             $permastruct = str_replace($oldRewrite, $slug, $args->rewrite['permastruct']);
         } else {
-            $permastruct = "{$args->rewrite['slug']}/%$postType%$";
+            $permastruct = "{$args->rewrite['slug']}/%$postType%";
         }
 
         add_permastruct($postType, $permastruct . $this->generatorId, $permastructArgs);

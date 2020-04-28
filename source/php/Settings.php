@@ -5,7 +5,7 @@ namespace WpPageForPostType;
 class Settings
 {
     public static $originalSlugs = array();
-    private $generatorId = "&generator=wp-pfp"; 
+    private $generatorId = "?generator=wp-pfp"; 
 
     public function __construct()
     {
