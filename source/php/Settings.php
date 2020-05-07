@@ -41,7 +41,7 @@ class Settings
             register_setting('reading', 'page_for_' . $postType->name . '_template');
             register_setting('reading', 'page_for_' . $postType->name . '_content');
 
-            if (wp_get_theme()->Name === 'Municipio') {
+            if ($this->getThemeName() === 'Municipio') {
                 register_setting('reading', $id . '_navigation', array($this, 'forceIntval'));
             }
 
@@ -174,5 +174,20 @@ class Settings
      
         //Fallback to normal behaviour
         return $pages; 
+    }
+
+    /**
+     * Get current name of theme, if has parent theme return that
+     * @return String Name of theme
+     */
+    protected function getThemeName()
+    {
+        $theme = wp_get_theme();
+
+        if ($theme->parent()) {
+            return $theme->parent()->get('Name');
+        }
+
+        return $theme->get('Name');
     }
 }
