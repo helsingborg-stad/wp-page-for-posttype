@@ -19,7 +19,6 @@ class Settings
      */
     public function register()
     {
-
         global $wp_post_types; 
 
         $postTypes = get_post_types(array(), 'objects');
@@ -42,6 +41,10 @@ class Settings
             register_setting('reading', 'page_for_' . $postType->name . '_template');
             register_setting('reading', 'page_for_' . $postType->name . '_content');
 
+            if (wp_get_theme()->Name === 'Municipio') {
+                register_setting('reading', $id . '_navigation', array($this, 'forceIntval'));
+            }
+
             add_settings_field(
                 $id,
                 $postType->label,
@@ -51,7 +54,8 @@ class Settings
                 array(
                     'name' => $id,
                     'post_type' => $postType,
-                    'value'     => get_option($id)
+                    'value'     => get_option($id),
+                    'navigation' =>  get_option($id . '_navigation')
                 )
             );
 
@@ -62,7 +66,6 @@ class Settings
             do_action(__NAMESPACE__ . '/renderOptionsPage', $postType->name, $wp_post_types[$postType->name]); 
         }
     }
-
 
     /**
      * Create static permalink to the post
@@ -117,6 +120,18 @@ class Settings
 
         $useContent = checked(get_option('page_for_' . $args['post_type']->name . '_content'), 'on', false) ? 'checked' : '';
         echo '<label style="margin-left: 10px;"><input type="checkbox" name="page_for_' . $args['post_type']->name . '_content" ' . $useContent . '> ' . __('Use content from page', 'wp-page-for-post-type') . '</label>';
+
+        if (wp_get_theme()->Name === 'Municipio') {
+            echo '<label style="margin-left: 20px;">Navigation to use: </label>';
+            wp_dropdown_pages(array(
+                'post_status'      => array('publish', 'private'),
+                'name'             => esc_attr($args['name']. '_navigation') ,
+                'id'               => esc_attr($args['name'] . '_navigation'),
+                'selected'         => esc_attr($args['navigation']),
+                'show_option_none' => sprintf(__('Default (/%s/)'), 'None selected')
+            ));
+        }
+
     }
 
     public function addCustomPostTypes($pages, $parsedArgs) {
