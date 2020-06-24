@@ -21,7 +21,7 @@ class Archive
 
         $wp_admin_bar->add_node(array(
             'id'    => 'edit',
-            'title' => '<span class="ab-item"></span>Edit Page',
+            'title' => '<span class="ab-item"></span>' . __('Edit Page', 'wp-page-for-post-type'),
             'href'  => get_edit_post_link($postId),
         ));
     }
