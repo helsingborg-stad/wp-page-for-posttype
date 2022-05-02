@@ -7,7 +7,7 @@ class Template
     public function __construct()
     {
         add_filter('template_include', array($this, 'template'), 1);
-        add_filter('template_include', array($this, 'post'), 2);
+        add_action('pre_get_posts', array($this, 'post'), 5);
     }
 
     public function template($template)
@@ -32,27 +32,37 @@ class Template
         return $template;
     }
 
-    public function post($template)
+    /**
+     * Manipilate fetched posts in order to reflect settings.
+     *
+     * @param WP_Query $query Original query
+     *
+     * @return void Nothing returned
+     */
+    public function post($query)
     {
-        if (!is_post_type_archive()) {
-            return $template;
+        if (!$query->is_main_query()) {
+            return;
         }
 
-        $useContent = get_option('page_for_' . get_post_type() . '_content');
-        if (!$useContent) {
-            return $template;
+        if (!$query->is_archive()) {
+            return;
         }
 
-        $pageForPostType = get_option('page_for_' . get_post_type());
-
-        if (!$pageForPostType) {
-            return $template;
+        $useContent = get_option('page_for_' . $query->get('post_type') . '_content');
+        if (!$useContent || $useContent == 'off') {
+            return;
         }
 
-        global $wp_query;
-        $wp_query->posts = array(get_post($pageForPostType));
-        $wp_query->post_count = 1;
+        $pageForPostType = get_option('page_for_' . $query->get('post_type'));
+        if (is_numeric($pageForPostType)) {
+            $query = new \WP_Query(
+                [
+                    'p' => $pageForPostType,
+                    'post_type' => 'page'
+                ]
+            );
+        }
 
-        return $template;
     }
 }
