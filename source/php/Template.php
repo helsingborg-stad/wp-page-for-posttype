@@ -62,6 +62,8 @@ class Template
                     'post_type' => 'page'
                 ]
             );
+
+            define('PAGE_FOR_POSTTYPE_ID', $pageForPostType);
         }
 
     }
