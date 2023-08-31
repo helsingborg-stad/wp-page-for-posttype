@@ -18,6 +18,7 @@ if(file_exists('composer.json')) {
     $buildCommands[] = 'composer dump-autoload';
 }
 
+/*
 //Run npm if package.json is found
 if(file_exists('package.json') && file_exists('package-lock.json')) {
     $buildCommands[] = 'npm ci --no-progress --no-audit';
@@ -29,7 +30,7 @@ if(file_exists('package.json') && file_exists('package-lock.json')) {
 if(file_exists('package-lock.json')) {
     $buildCommands[] = 'npx --yes browserslist@latest --update-db';
     $buildCommands[] = 'npm run build';
-}
+}*/
 
 // Files and directories not suitable for prod to be removed.
 $removables = [
