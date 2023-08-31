@@ -24,14 +24,11 @@ define('WP_PAGE_FOR_POST_TYPE_TEMPLATE_PATH', WP_PAGE_FOR_POST_TYPE_PATH . 'temp
 
 load_plugin_textdomain('wp-page-for-post-type', false, plugin_basename(dirname(__FILE__)) . '/languages');
 
-require_once WP_PAGE_FOR_POST_TYPE_PATH . 'source/php/Vendor/Psr4ClassLoader.php';
+// Autoload from plugin
+if (file_exists(WP_PAGE_FOR_POST_TYPE_PATH . 'vendor/autoload.php')) {
+    require_once WP_PAGE_FOR_POST_TYPE_PATH . 'vendor/autoload.php';
+}
 require_once WP_PAGE_FOR_POST_TYPE_PATH . 'Public.php';
-
-// Instantiate and register the autoloader
-$loader = new WpPageForPostType\Vendor\Psr4ClassLoader();
-$loader->addPrefix('WpPageForPostType', WP_PAGE_FOR_POST_TYPE_PATH);
-$loader->addPrefix('WpPageForPostType', WP_PAGE_FOR_POST_TYPE_PATH . 'source/php/');
-$loader->register();
 
 // Start application
 new WpPageForPostType\App();
