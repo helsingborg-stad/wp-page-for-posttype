@@ -1,22 +1,21 @@
 {
-  "name": "wp-page-for-post-type",
-  "version": "1.0.0",
-  "description": "",
-  "main": "",
-  "scripts": {
-    "build": "",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/Svanmark/Wordpress-Plugin-Boilerplate.git"
-  },
-  "author": "Kristoffer Svanmark",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/Svanmark/Wordpress-Plugin-Boilerplate/issues"
-  },
-  "homepage": "https://github.com/Svanmark/Wordpress-Plugin-Boilerplate",
-  "devDependencies": {
-  }
+    "name": "wp-page-for-post-type",
+    "version": "2.0.0",
+    "description": "",
+    "main": "",
+    "scripts": {
+        "build": "",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/Svanmark/Wordpress-Plugin-Boilerplate.git"
+    },
+    "author": "Kristoffer Svanmark",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/Svanmark/Wordpress-Plugin-Boilerplate/issues"
+    },
+    "homepage": "https://github.com/Svanmark/Wordpress-Plugin-Boilerplate",
+    "devDependencies": []
 }

@@ -13,10 +13,11 @@
         }
     ],
     "minimum-stability": "stable",
-    "require": {},
+    "require": [],
     "autoload": {
         "psr-4": {
-          "WpPageForPostType\\": "source/php/"
+            "WpPageForPostType\\": "source/php/"
         }
-    }
+    },
+    "version": "2.0.0"
 }

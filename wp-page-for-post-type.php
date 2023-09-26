@@ -4,7 +4,7 @@
  * Plugin Name:       WP Page for post type
  * Plugin URI:        https://github.com/helsingborg-stad
  * Description:       Set a page where the post type's archive should be displayed
- * Version:           1.0.0
+ * Version: 2.0.0
  * Author:            Kristoffer Svanmark, Sebastian Thulin
  * Author URI:        https://github.com/helsingborg-stad
  * License:           MIT
