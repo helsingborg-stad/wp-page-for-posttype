@@ -6,9 +6,10 @@ if (php_sapi_name() !== 'cli') {
 }
 
 /* Parameters: 
- --no-composer      Does not install vendors. Just create the autoloader.
- --cleanup          Remove removeables. 
- --allow-gulp       Allow gulp to be used. 
+ --no-composer      Does not install vendors via composer
+ --cleanup          Remove removeables
+ --install-npm      Installs npm package as per package.json name field
+ --release          Does not run composer install and does not remove .git
 */
 
 // Any command needed to run and build plugin assets when newly cheched out of repo.
@@ -17,37 +18,46 @@ $buildCommands = [];
 //Add composer build, if flag --no-composer is undefined.
 //Dump autloader. 
 //Only if composer.json exists.
-if(file_exists('composer.json')) {
-    if(is_array($argv) && !in_array('--no-composer', $argv)) {
-        $buildCommands[] = 'composer install --prefer-dist --no-progress --no-dev'; 
+if (file_exists('composer.json')) {
+    if (is_array($argv) && !in_array('--no-composer', $argv)) {
+        $buildCommands[] = 'composer install --prefer-dist --no-progress --no-dev';
     }
+
     $buildCommands[] = 'composer dump-autoload';
 }
 
 //Run npm if package.json is found
-if(file_exists('package.json') && file_exists('package-lock.json')) {
-    $buildCommands[] = 'npm ci --no-progress --no-audit';
-} elseif(file_exists('package.json') && !file_exists('package-lock.json')) {
-    $buildCommands[] = 'npm install --no-progress --no-audit';
-}
-
-//Run build if package-lock.json is found
-if(file_exists('package-lock.json') && !file_exists('gulp.js')) {
-    $buildCommands[] = 'npx --yes browserslist@latest --update-db';
-    $buildCommands[] = 'npm run build';
-} elseif(file_exists('package-lock.json') && file_exists('gulp.js') && is_array($argv) && in_array('--allow-gulp', $argv)) {
-    $buildCommands[] = 'gulp';
+if (file_exists('package.json') && file_exists('package-lock.json')) {
+    if (is_array($argv) && !in_array('--install-npm', $argv)) {
+        $buildCommands[] = 'npm ci --no-progress --no-audit';
+        $buildCommands[] = 'npm run build';
+    } else {
+        $npmPackage = json_decode(file_get_contents('package.json'));
+        $buildCommands[] = "npm install $npmPackage->name";
+        $buildCommands[] = "rm -rf ./dist";
+        $buildCommands[] = "mv node_modules/$npmPackage->name/dist ./";
+    }
+} elseif (file_exists('package.json') && !file_exists('package-lock.json')) {
+    if (is_array($argv) && !in_array('--install-npm', $argv)) {
+        $buildCommands[] = 'npm install --no-progress --no-audit';
+        $buildCommands[] = 'npm run build';
+    } else {
+        $npmPackage = json_decode(file_get_contents('package.json'));
+        $buildCommands[] = "npm install $npmPackage->name";
+        $buildCommands[] = "rm -rf ./dist";
+        $buildCommands[] = "mv node_modules/$npmPackage->name/dist ./";
+    }
 }
 
 // Files and directories not suitable for prod to be removed.
 $removables = [
-    '.git',
     '.gitignore',
     '.github',
     '.gitattributes',
     'build.php',
+    'build.js',
     '.npmrc',
-    'composer.json',
+    //'composer.json',
     'composer.lock',
     'env-example',
     'webpack.config.js',
@@ -55,14 +65,18 @@ $removables = [
     'package.json',
     'phpunit.xml.dist',
     'README.md',
-    'gulpfile.js',
     './node_modules/',
     './source/sass/',
     './source/js/',
     'LICENSE',
     'babel.config.js',
-    'yarn.lock'
+    'yarn.lock',
+    '.devcontainer',
 ];
+
+if (is_array($argv) && !in_array('--release', $argv)) {
+    $removables = array_merge($removables, ['.git']);
+}
 
 $dirName = basename(dirname(__FILE__));
 
@@ -74,14 +88,14 @@ foreach ($buildCommands as $buildCommand) {
     $timeStart = microtime(true);
     $exitCode = executeCommand($buildCommand);
     $buildTime = round(microtime(true) - $timeStart);
-    print "---- Done build command '$buildCommand' for $dirName.  Build time: $buildTime seconds. ----\n";
+    print "---- Done build command '$buildCommand' for $dirName.  Build time: $buildTime seconds. ----\n\n";
     if ($exitCode > 0) {
         exit($exitCode);
     }
 }
 
 // Remove files and directories if '--cleanup' argument is supplied to save local developers from disasters.
-if(is_array($argv) && in_array('--cleanup', $argv)) {
+if (is_array($argv) && in_array('--cleanup', $argv)) {
     foreach ($removables as $removable) {
         if (file_exists($removable)) {
             print "Removing $removable from $dirName\n";
@@ -113,7 +127,7 @@ function executeCommand($command)
         $liveOutput     = fread($proc, 4096);
         $completeOutput = $completeOutput . $liveOutput;
         print $liveOutput;
-        @ flush();
+        @flush();
     }
 
     pclose($proc);
