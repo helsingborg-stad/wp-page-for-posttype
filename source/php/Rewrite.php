@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WpPageForPostType;
 
 class Rewrite
@@ -39,7 +41,7 @@ class Rewrite
         // Get the new slug
         $newSlug = $this->getPageSlug($pageForPostType);
 
-        $args->rewrite     = wp_parse_args(array('slug' => $newSlug), $args->rewrite);
+        $args->rewrite = wp_parse_args(array('slug' => $newSlug), $args->rewrite);
         $args->has_archive = $newSlug;
 
         // Rebuild rewrite rules
@@ -83,13 +85,13 @@ class Rewrite
                 add_rewrite_rule(
                     "{$archiveSlug}/feed/$feeds/?$",
                     "index.php?post_type=$postType" . '&feed=$matches[1]',
-                    'top'
+                    'top',
                 );
 
                 add_rewrite_rule(
                     "{$archiveSlug}/$feeds/?$",
                     "index.php?post_type=$postType" . '&feed=$matches[1]',
-                    'top'
+                    'top',
                 );
             }
 
@@ -98,7 +100,7 @@ class Rewrite
                 add_rewrite_rule(
                     "{$archiveSlug}/{$wp_rewrite->pagination_base}/([0-9]{1,})/?$",
                     "index.php?post_type=$postType" . '&paged=$matches[1]',
-                    'top'
+                    'top',
                 );
             }
         }

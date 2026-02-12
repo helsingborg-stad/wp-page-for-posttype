@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WpPageForPostType;
 
 class NavClasses
@@ -18,24 +20,24 @@ class NavClasses
     public function updateNavCLasses($sorted_menu_items, $args)
     {
         $object_post_type = get_post_type();
-        if (! get_post_type()) {
+        if (!get_post_type()) {
             return $sorted_menu_items;
         }
 
         // Get post page ID array
         $page_ids = $this->get_page_ids();
-        if (! isset($page_ids[$object_post_type])) {
+        if (!isset($page_ids[$object_post_type])) {
             return $sorted_menu_items;
         }
 
         foreach ($sorted_menu_items as &$item) {
             if ($item->type === 'post_type' && $item->object === 'page' && intval($item->object_id) === intval($page_ids[$object_post_type])) {
                 if (is_singular($object_post_type)) {
-                    $item->classes[]             = 'current-menu-ancestor';
+                    $item->classes[] = 'current-menu-ancestor';
                     $item->current_item_ancestor = true;
                 }
                 if (is_post_type_archive($object_post_type)) {
-                    $item->classes[]    = 'current-menu-item';
+                    $item->classes[] = 'current-menu-item';
                     $item->current_item = true;
                 }
             }
@@ -53,11 +55,11 @@ class NavClasses
         $page_ids = array();
 
         foreach (get_post_types(array(), 'objects') as $post_type) {
-            if (! $post_type->has_archive) {
+            if (!$post_type->has_archive) {
                 continue;
             }
 
-            if (! get_option("page_for_{$post_type->name}")) {
+            if (!get_option("page_for_{$post_type->name}")) {
                 continue;
             }
 

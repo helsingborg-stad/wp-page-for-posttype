@@ -8,9 +8,6 @@ node_modules/
 # ignore composer vendor directory
 /vendor
 
-# ignore composer lock file
-composer.lock
-
 # ignore jekyll build directory
 /_site
 
@@ -53,3 +50,4 @@ Thumbs.db
 # track these files, if they exist
 !.gitignore
 !.editorconfig
+!/.vscode/
