@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WpPageForPostType;
 
 class Template
@@ -59,12 +61,11 @@ class Template
             $query = new \WP_Query(
                 [
                     'p' => $pageForPostType,
-                    'post_type' => 'page'
-                ]
+                    'post_type' => 'page',
+                ],
             );
 
             define('PAGE_FOR_POSTTYPE_ID', $pageForPostType);
         }
-
     }
 }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WpPageForPostType;
 
 class Settings
@@ -23,7 +25,7 @@ class Settings
             'wp_page_for_post_type',
             __('Page and template for post type archives', 'wp-page-for-post-type'),
             '__return_false',
-            'reading'
+            'reading',
         );
 
         $postTypes = array_filter($postTypes, function ($item) {
@@ -46,8 +48,8 @@ class Settings
                 array(
                     'name' => $id,
                     'post_type' => $postType,
-                    'value'     => get_option($id)
-                )
+                    'value' => get_option($id),
+                ),
             );
         }
     }
@@ -76,10 +78,10 @@ class Settings
         }
 
         wp_dropdown_pages(array(
-            'post_status'      => array('publish', 'private'),
-            'name'             => esc_attr($args['name']),
-            'id'               => esc_attr($args['name'] . '_dropdown'),
-            'selected'         => esc_attr($args['value']),
+            'post_status' => array('publish', 'private'),
+            'name' => esc_attr($args['name']),
+            'id' => esc_attr($args['name'] . '_dropdown'),
+            'selected' => esc_attr($args['value']),
             'show_option_none' => sprintf(__('Default (/%s/)'), $default),
         ));
 

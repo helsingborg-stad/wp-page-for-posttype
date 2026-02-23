@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace WpPageForPostType;
 
 class Archive
@@ -13,16 +15,16 @@ class Archive
     {
         $postId = get_option('page_for_' . get_post_type());
 
-        if(!is_archive() || $postId  === '0') {
+        if (!is_archive() || $postId === '0') {
             return;
         }
 
         global $wp_admin_bar;
 
         $wp_admin_bar->add_node(array(
-            'id'    => 'edit',
+            'id' => 'edit',
             'title' => '<span class="ab-item"></span>' . __('Edit Page', 'wp-page-for-post-type'),
-            'href'  => get_edit_post_link($postId),
+            'href' => get_edit_post_link($postId),
         ));
     }
 }
