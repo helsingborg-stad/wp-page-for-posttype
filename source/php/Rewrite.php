@@ -38,8 +38,13 @@ class Rewrite
         $oldRewrite = isset($args->rewrite['slug']) ? $args->rewrite['slug'] : $postType;
         \WpPageForPostType\Settings::$originalSlugs[$postType] = $oldRewrite;
 
+        // Bail if the pageForPostType is not numeric
+        if (!is_numeric($pageForPostType)) {
+            return;
+        }
+
         // Get the new slug
-        $newSlug = $this->getPageSlug($pageForPostType);
+        $newSlug = $this->getPageSlug((int) $pageForPostType);
 
         $args->rewrite = wp_parse_args(array('slug' => $newSlug), $args->rewrite);
         $args->has_archive = $newSlug;
