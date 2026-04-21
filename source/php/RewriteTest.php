@@ -208,6 +208,18 @@ class RewriteTest extends TestCase
     /**
      * @return void
      */
+    public function testFilterArchiveLinkReturnsOriginalLinkWhenPageIsNotConfigured(): void
+    {
+        $rewrite = new Rewrite();
+
+        $localizedArchiveLink = $rewrite->filterArchiveLink('https://example.com/news/', 'news');
+
+        self::assertSame('https://example.com/news/', $localizedArchiveLink);
+    }
+
+    /**
+     * @return void
+     */
     public function testFilterPolylangArchiveUrlReturnsTranslatedPagePermalink(): void
     {
         $GLOBALS['rewriteTestState']['options']['page_for_news']      = 1;
@@ -227,6 +239,26 @@ class RewriteTest extends TestCase
         );
 
         self::assertSame('https://example.com/en/news/', $localizedArchiveLink);
+    }
+
+    /**
+     * @return void
+     */
+    public function testFilterPolylangArchiveUrlReturnsOriginalUrlWhenTranslationIsUnavailable(): void
+    {
+        $GLOBALS['rewriteTestState']['options']['page_for_news']      = 1;
+        $GLOBALS['rewriteTestState']['postStatuses'][1]               = 'publish';
+        $GLOBALS['rewriteTestState']['isPostTypeArchive']             = true;
+        $GLOBALS['rewriteTestState']['queryVars']['post_type']        = 'news';
+
+        $rewrite = new Rewrite();
+
+        $localizedArchiveLink = $rewrite->filterPolylangArchiveUrl(
+            'https://example.com/en/nyheter/',
+            (object) array('slug' => 'en'),
+        );
+
+        self::assertSame('https://example.com/en/nyheter/', $localizedArchiveLink);
     }
 
     /**
