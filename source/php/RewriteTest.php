@@ -167,6 +167,10 @@ namespace {
      */
     function pll_current_language(string $field = 'slug'): string
     {
+        if ($field !== 'slug') {
+            return $GLOBALS['rewriteTestState']['currentLanguage'];
+        }
+
         return $GLOBALS['rewriteTestState']['currentLanguage'];
     }
 }

@@ -88,7 +88,8 @@ class Rewrite
         $permastructArgs['feed'] = $permastructArgs['feeds'];
 
         if (isset($args->rewrite['permastruct'])) {
-            $permastruct = str_replace($oldRewrite, $args->rewrite['slug'], $args->rewrite['permastruct']);
+            $rewriteToReplace = $oldRewrite !== '' ? $oldRewrite : $postType;
+            $permastruct      = str_replace($rewriteToReplace, $args->rewrite['slug'], $args->rewrite['permastruct']);
         } else {
             $permastruct = "{$args->rewrite['slug']}/%$postType%";
         }
