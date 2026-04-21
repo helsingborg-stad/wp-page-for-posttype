@@ -165,9 +165,11 @@ class Rewrite
             return $link;
         }
 
+        $language = function_exists('pll_current_language') ? pll_current_language('slug') : null;
+
         $localizedLink = $this->getLocalizedPageUrl(
             (int) $pageForPostType,
-            function_exists('pll_current_language') ? pll_current_language('slug') : null,
+            is_string($language) ? $language : null,
         );
 
         return $localizedLink ?? $link;
