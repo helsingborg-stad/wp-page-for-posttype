@@ -72,10 +72,11 @@ class Rewrite
         }
 
         if ($args->has_archive) {
-            $archiveSlug = $args->has_archive === true ? $args->rewrite['slug'] : $args->has_archive;
+            $archiveSlug     = $args->has_archive === true ? $args->rewrite['slug'] : $args->has_archive;
+            $pageForPostType = get_option('page_for_' . $postType);
             $archiveSlugs = array_merge(
                 array((string) $archiveSlug),
-                $this->getLocalizedPageSlugs((int) get_option('page_for_' . $postType)),
+                $this->getLocalizedPageSlugs((int) $pageForPostType),
             );
 
             foreach (array_unique($archiveSlugs) as $localizedArchiveSlug) {
@@ -171,10 +172,10 @@ class Rewrite
      * Return the localized archive URL for Polylang's language switcher.
      *
      * @param string $url
-     * @param object $language
+     * @param mixed $language
      * @return string
      */
-    public function filterPolylangArchiveUrl(string $url, object $language): string
+    public function filterPolylangArchiveUrl(string $url, $language): string
     {
         if (!is_post_type_archive()) {
             return $url;
@@ -194,7 +195,10 @@ class Rewrite
             return $url;
         }
 
-        $localizedLink = $this->getLocalizedPageUrl((int) $pageForPostType, $language->slug ?? null);
+        $languageSlug = is_object($language) && isset($language->slug) && is_string($language->slug)
+            ? $language->slug
+            : null;
+        $localizedLink = $this->getLocalizedPageUrl((int) $pageForPostType, $languageSlug);
 
         return $localizedLink ?? $url;
     }
