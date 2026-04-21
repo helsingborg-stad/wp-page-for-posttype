@@ -9,7 +9,7 @@ namespace {
      *
      * @return void
      */
-    function rewriteTestResetState(): void
+    function reset_rewrite_test_state(): void
     {
         $GLOBALS['rewriteTestState'] = array(
             'options'           => array(),
@@ -26,7 +26,7 @@ namespace {
         );
     }
 
-    rewriteTestResetState();
+    $GLOBALS['rewriteTestState'] = array();
 
     /**
      * @param string $hook
@@ -182,7 +182,7 @@ class RewriteTest extends TestCase
 {
     protected function setUp(): void
     {
-        \rewriteTestResetState();
+        \reset_rewrite_test_state();
     }
 
     /**
