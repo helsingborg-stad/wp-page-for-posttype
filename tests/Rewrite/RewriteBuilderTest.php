@@ -79,7 +79,7 @@ final class RewriteBuilderTest extends TestCase
 
         // Assert
         $rules = $GLOBALS['wp_stub_rewrite_rules'];
-        $archiveRules = array_values(array_filter($rules, static fn($r) => !str_contains($r['regex'], '(') && !str_contains($r['regex'], 'feed')));
+        $archiveRules = $this->filterArchiveRules($rules);
 
         $this->assertCount(2, $archiveRules, 'Expected one archive rule per language.');
 
@@ -113,10 +113,7 @@ final class RewriteBuilderTest extends TestCase
         $builder->registerArchiveRewriteRules('book', $args, 100);
 
         // Assert
-        $archiveRules = array_values(array_filter(
-            $GLOBALS['wp_stub_rewrite_rules'],
-            static fn($r) => !str_contains($r['regex'], '(') && !str_contains($r['regex'], 'feed'),
-        ));
+        $archiveRules = $this->filterArchiveRules($GLOBALS['wp_stub_rewrite_rules']);
 
         $this->assertCount(1, $archiveRules);
         $this->assertSame('index.php?post_type=book&lang=en', $archiveRules[0]['query']);
@@ -178,6 +175,20 @@ final class RewriteBuilderTest extends TestCase
         $this->assertNotEmpty($rules);
         $this->assertSame('books/?$', $rules[0]['regex']);
         $this->assertSame('index.php?post_type=book', $rules[0]['query']);
+    }
+
+    /**
+     * Keeps only the "plain archive" rules (no regex groups, no feed segment).
+     *
+     * @param array<int,array{regex:string,query:string,priority:string}> $rules
+     * @return array<int,array{regex:string,query:string,priority:string}>
+     */
+    private function filterArchiveRules(array $rules): array
+    {
+        return array_values(array_filter(
+            $rules,
+            static fn($r) => !str_contains($r['regex'], '(') && !str_contains($r['regex'], 'feed'),
+        ));
     }
 
     /**
