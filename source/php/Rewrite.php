@@ -4,22 +4,52 @@ declare(strict_types=1);
 
 namespace WpPageForPostType;
 
+use WpPageForPostType\Polylang\PolylangService;
+use WpPageForPostType\Polylang\PolylangServiceInterface;
+use WpPageForPostType\Rewrite\RewriteBuilder;
+use WpPageForPostType\Rewrite\SlugResolver;
+
+/**
+ * Wires the `registered_post_type` hook into the rewrite builder.
+ *
+ * This class retains its historical name/position so existing consumers keep
+ * working, but the actual rewrite-rule generation logic now lives in
+ * {@see RewriteBuilder} and is split across dedicated collaborators:
+ *  - {@see PolylangServiceInterface} — language resolver
+ *  - {@see SlugResolver}             — slug generator
+ *  - {@see RewriteBuilder}           — rewrite rule builder
+ *
+ * The split makes the rewrite logic Polylang-aware: when Polylang is active
+ * the builder registers per-language rewrite rules (including `lang=`),
+ * otherwise it falls back to the original single-rule behaviour.
+ */
 class Rewrite
 {
-    public function __construct()
+    private RewriteBuilder $rewriteBuilder;
+
+    public function __construct(?RewriteBuilder $rewriteBuilder = null)
     {
+        if ($rewriteBuilder === null) {
+            $polylangService      = new PolylangService();
+            $slugResolver         = new SlugResolver($polylangService);
+            $this->rewriteBuilder = new RewriteBuilder($slugResolver, $polylangService);
+        } else {
+            $this->rewriteBuilder = $rewriteBuilder;
+        }
+
         add_action('registered_post_type', array($this, 'updateRewrite'), 11, 2);
     }
 
     /**
-     * Updates the rewrite rules for the posttype
-     * @param  string $postType
-     * @param  array $args
+     * Updates the rewrite rules for the posttype.
+     *
+     * @param string $postType
+     * @param object $args
      * @return void
      */
     public function updateRewrite(string $postType, $args)
     {
-        global $wp_post_types, $wp_rewrite;
+        global $wp_post_types;
 
         // Bail if page not set
         $pageForPostType = get_option('page_for_' . $postType);
@@ -33,109 +63,41 @@ class Rewrite
             return;
         }
 
-        // Get original rewrite rule
-        $args->rewrite = (array) $args->rewrite;
-        $oldRewrite = isset($args->rewrite['slug']) ? $args->rewrite['slug'] : $postType;
-        \WpPageForPostType\Settings::$originalSlugs[$postType] = $oldRewrite;
+        // Record the original slug for the settings screen "Default (/…/)" label.
+        $args->rewrite                                             = (array) $args->rewrite;
+        $oldRewrite                                                = isset($args->rewrite['slug']) ? $args->rewrite['slug'] : $postType;
+        \WpPageForPostType\Settings::$originalSlugs[$postType]     = $oldRewrite;
 
-        // Bail if the pageForPostType is not numeric
         if (!is_numeric($pageForPostType)) {
             return;
         }
-
-        // Get the new slug
-        $newSlug = $this->getPageSlug((int) $pageForPostType);
-
-        $args->rewrite = wp_parse_args(array('slug' => $newSlug), $args->rewrite);
-        $args->has_archive = $newSlug;
-
-        // Rebuild rewrite rules
-        $this->rebuildRewriteRules($postType, $args, $oldRewrite);
-
-        // Update global
-        $wp_post_types[$postType] = $args;
-    }
-
-    /**
-     * Rebuild rewrite rules
-     * @param  string $postType
-     * @param  array $args
-     * @return bool
-     */
-    public function rebuildRewriteRules($postType, $args)
-    {
-        global $wp_post_types, $wp_rewrite;
 
         if (!is_admin() && empty(get_option('permalink_structure'))) {
             return;
         }
 
-        if ($args->has_archive) {
-            $archiveSlug = $args->has_archive === true ? $args->rewrite['slug'] : $args->has_archive;
+        $this->rewriteBuilder->registerArchiveRewriteRules($postType, $args, (int) $pageForPostType);
 
-            // Maybe append blogfront
-            if ($args->rewrite['with_front']) {
-                $archiveSlug = substr($wp_rewrite->front, 1) . $archiveSlug;
-            } else {
-                $archiveSlug = $wp_rewrite->root . $archiveSlug;
-            }
-
-            // Add rewrite rule for the archive
-            add_rewrite_rule("{$archiveSlug}/?$", "index.php?post_type=$postType", 'top');
-
-            // Add rewrite rules for feeds
-            if ($args->rewrite['feeds'] && $wp_rewrite->feeds) {
-                $feeds = '(' . trim(implode('|', $wp_rewrite->feeds)) . ')';
-
-                add_rewrite_rule(
-                    "{$archiveSlug}/feed/$feeds/?$",
-                    "index.php?post_type=$postType" . '&feed=$matches[1]',
-                    'top',
-                );
-
-                add_rewrite_rule(
-                    "{$archiveSlug}/$feeds/?$",
-                    "index.php?post_type=$postType" . '&feed=$matches[1]',
-                    'top',
-                );
-            }
-
-            // Add rewrite rules for pagination
-            if ($args->rewrite['pages']) {
-                add_rewrite_rule(
-                    "{$archiveSlug}/{$wp_rewrite->pagination_base}/([0-9]{1,})/?$",
-                    "index.php?post_type=$postType" . '&paged=$matches[1]',
-                    'top',
-                );
-            }
-        }
-
-        $permastructArgs = $args->rewrite;
-        $permastructArgs['feed'] = $permastructArgs['feeds'];
-
-        // Support plugins that enable 'permastruct' option
-        if (isset($args->rewrite['permastruct'])) {
-            $permastruct = str_replace($oldRewrite, $slug, $args->rewrite['permastruct']);
-        } else {
-            $permastruct = "{$args->rewrite['slug']}/%$postType%";
-        }
-
-        add_permastruct($postType, $permastruct, $permastructArgs);
-
-        return true;
+        // Keep the post type args mutation visible to the rest of WordPress,
+        // matching the historical behaviour of this class.
+        $wp_post_types[$postType] = $args;
     }
 
     /**
-     * Get permalink (without home url) for a specific post
-     * @param  int    $postId
+     * Get permalink (without home url) for a specific post.
+     *
+     * Preserved for backward compatibility with any external callers that
+     * may have relied on this method. Internally, {@see SlugResolver} is
+     * now responsible for slug generation.
+     *
+     * @param  int $postId
      * @return string
      */
-    public function getPageSlug(int $postId)
+    public function getPageSlug(int $postId): string
     {
         $slug = get_permalink($postId);
-        $slug = str_replace(home_url(), '', $slug);
-        $slug = trim($slug, '/');
+        $slug = str_replace(home_url(), '', (string) $slug);
 
-        return $slug;
+        return trim($slug, '/');
     }
 }
