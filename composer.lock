@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "c73d58337803e50d9a4faf12bc36c3ac",
+    "content-hash": "1c6844209fe5778569cb6b44e2ed56fa",
     "packages": [
         {
             "name": "helsingborg-stad/wpservice",
@@ -57,16 +57,16 @@
         },
         {
             "name": "helsingborg-stad/wputilservice",
-            "version": "0.2.48",
+            "version": "0.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/helsingborg-stad/wputilservice.git",
-                "reference": "60afacdecc1aa72f14f135916bdffe80abd52dc0"
+                "reference": "7f64cca13cc1511250f728f6cd92c52ec2ead767"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/helsingborg-stad/wputilservice/zipball/60afacdecc1aa72f14f135916bdffe80abd52dc0",
-                "reference": "60afacdecc1aa72f14f135916bdffe80abd52dc0",
+                "url": "https://api.github.com/repos/helsingborg-stad/wputilservice/zipball/7f64cca13cc1511250f728f6cd92c52ec2ead767",
+                "reference": "7f64cca13cc1511250f728f6cd92c52ec2ead767",
                 "shasum": ""
             },
             "require": {
@@ -99,9 +99,9 @@
             "description": "Simplifies WordPress development by providing a centralized WpUtilService that exposes a WordPress api wrapped in a streamlined manner. Simplify your development workflow and enhance WordPress integration with ease.",
             "support": {
                 "issues": "https://github.com/helsingborg-stad/wputilservice/issues",
-                "source": "https://github.com/helsingborg-stad/wputilservice/tree/0.2.48"
+                "source": "https://github.com/helsingborg-stad/wputilservice/tree/0.3.0"
             },
-            "time": "2025-11-27T13:59:02+00:00"
+            "time": "2026-09-03T13:54:31+00:00"
         }
     ],
     "packages-dev": [
@@ -1956,6 +1956,6 @@
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": {},
+    "platform-dev": [],
     "plugin-api-version": "2.6.0"
 }
