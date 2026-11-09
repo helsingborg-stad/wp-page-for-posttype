@@ -21,8 +21,8 @@ jobs:
       - name: Bump version files (no release yet)
         uses: helsingborg-stad/release-wp-plugin-action@main
         with:
-          php-version: 8.2
-          node-version: 20.6.0
+          php-version: 8.3
+          node-version: 22
           skip-release: true  # custom flag you added
 
       - name: Pull latest main with bumped version
@@ -42,7 +42,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: "8.2"
+          php-version: "8.3"
 
       - name: Configure npm for GitHub Packages
         run: |
