@@ -28,7 +28,7 @@
     "require": {
         "php": ">=8.2",
         "helsingborg-stad/wputilservice": "^0.3",
-        "helsingborg-stad/wpservice": "^2.0"
+        "helsingborg-stad/wpservice": "^3.0"
     },
     "suggest": {
         "helsingborg-stad/municipio": "^6.0.0"

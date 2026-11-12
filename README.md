@@ -3,6 +3,10 @@
 Select a page to act as the archive of a custom post type. The post type's
 archive slug is rewritten to match the selected page's permalink.
 
+## Requirements
+
+PHP 8.2–8.5 is supported by the wpservice 3 dependency.
+
 ## Multilingual (Polylang) support
 
 When the [Polylang](https://polylang.pro/) plugin is active, the archive
