@@ -4,24 +4,24 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1c6844209fe5778569cb6b44e2ed56fa",
+    "content-hash": "94e002123c9876dce82f8dd4f148a2c1",
     "packages": [
         {
             "name": "helsingborg-stad/wpservice",
-            "version": "2.0.9",
+            "version": "3.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/helsingborg-stad/wpservice.git",
-                "reference": "3ed37137b25defbc98e24904f8523ea2f86e3c24"
+                "reference": "a060553f063107137a93fbe6d274d9e3238a96c9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/helsingborg-stad/wpservice/zipball/3ed37137b25defbc98e24904f8523ea2f86e3c24",
-                "reference": "3ed37137b25defbc98e24904f8523ea2f86e3c24",
+                "url": "https://api.github.com/repos/helsingborg-stad/wpservice/zipball/a060553f063107137a93fbe6d274d9e3238a96c9",
+                "reference": "a060553f063107137a93fbe6d274d9e3238a96c9",
                 "shasum": ""
             },
             "require": {
-                "php": "^8.2"
+                "php": "8.2 - 8.5"
             },
             "require-dev": {
                 "helsingborg-stad/phpcs": "^0.3.5",
@@ -51,9 +51,10 @@
             "description": "Simplifies WordPress integration by providing a centralized WpService that exposes global WordPress functions in a streamlined manner. Simplify your development workflow and enhance WordPress integration with ease.",
             "support": {
                 "issues": "https://github.com/helsingborg-stad/wpservice/issues",
-                "source": "https://github.com/helsingborg-stad/wpservice/tree/2.0.9"
+                "source": "https://github.com/helsingborg-stad/wpservice/tree/3.0.0"
             },
-            "time": "2025-10-07T11:25:27+00:00"
+            "time": "2026-11-11T14:28:13+00:00",
+            "published-time": "2026-11-11T14:28:18+00:00"
         },
         {
             "name": "helsingborg-stad/wputilservice",
@@ -1956,6 +1957,6 @@
     "platform": {
         "php": ">=8.2"
     },
-    "platform-dev": [],
-    "plugin-api-version": "2.6.0"
+    "platform-dev": {},
+    "plugin-api-version": "2.11.0"
 }
